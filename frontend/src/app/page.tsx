@@ -1,40 +1,24 @@
+import StatsGrid from "@/components/StatsGrid";
+import RecommendationCard from "@/components/RecommendationCard";
+import Header from "@/components/Header";
+import Sidebar from "@/components/Sidebar";
+
 export default function Home() {
   return (
-    <main
-      style={{
-        fontFamily: "Arial, sans-serif",
-        padding: "60px",
-        maxWidth: "1000px",
-        margin: "0 auto",
-      }}
-    >
-      <h1 style={{ fontSize: "48px", color: "#1E3A8A" }}>
-        StaffIntel
-      </h1>
+    <main className="flex min-h-screen bg-slate-950 text-white">
 
-      <p style={{ fontSize: "22px", color: "#555" }}>
-        AI-Powered Opportunity Intelligence Platform
-      </p>
+      <Sidebar />
 
-      <hr />
+      <section className="flex-1 p-10">
 
-      <h2>Today's Top Opportunities</h2>
+        <Header />
 
-      <div
-        style={{
-          marginTop: "30px",
-          padding: "20px",
-          border: "1px solid #ddd",
-          borderRadius: "12px",
-        }}
-      >
-        🚧 Welcome Mahesh.
+        <StatsGrid />
 
-        <br />
-        <br />
+        <RecommendationCard />
 
-        Soon StaffIntel will automatically discover your best staffing prospects every morning.
-      </div>
+      </section>
+
     </main>
   );
 }
