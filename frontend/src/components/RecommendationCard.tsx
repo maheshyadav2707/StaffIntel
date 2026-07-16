@@ -1,4 +1,4 @@
-import { calculateOpportunityScore } from "@/lib/scoring";
+import { calculateOpportunityScore, generateInsight, } from "@/lib/scoring";
 
 interface RecommendationCardProps {
   company: any;
@@ -9,6 +9,7 @@ export default function RecommendationCard({
 }: RecommendationCardProps) {
 
   const result = calculateOpportunityScore(company.signals);
+  const insight = generateInsight(company);
 
   return (
     <div className="rounded-2xl border border-slate-800 bg-slate-900 p-8">
@@ -70,9 +71,7 @@ export default function RecommendationCard({
           <div className="rounded-xl bg-slate-800 p-5">
 
            <p className="leading-7 text-slate-300">
-  {company.name} shows multiple hiring signals that
-  historically correlate with companies using
-  external staffing partners.
+  {insight}
 </p>
 
             <p className="mt-4 font-medium text-green-400">

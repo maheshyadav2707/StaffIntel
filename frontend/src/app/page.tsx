@@ -10,8 +10,20 @@ import { sampleCompanies } from "@/data/sampleCompanies";
 
 export default function Home() {
 
-  const [selectedCompany, setSelectedCompany] 
-  = useState(sampleCompanies[0]);
+  const [selectedCompany, setSelectedCompany] = useState(sampleCompanies[0]);
+  async function testAPI(company: any) {
+  const response = await fetch("/api/insight", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(company),
+  });
+
+  const data = await response.json();
+
+  console.log(data);
+}
   return (
     <main className="flex min-h-screen bg-slate-950 text-white">
 
@@ -26,12 +38,13 @@ export default function Home() {
 <div className="mt-10 grid grid-cols-3 gap-8">
 
   <div className="col-span-1">
-    <ProspectList 
-    
-        selectedCompany={selectedCompany}
-    onSelectCompany={setSelectedCompany}
-    
-    />
+    <ProspectList
+    selectedCompany={selectedCompany}
+    onSelectCompany={(company) => {
+        setSelectedCompany(company);
+        testAPI(company);
+    }}
+/>
     
   </div>
 
