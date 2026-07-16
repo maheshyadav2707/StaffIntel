@@ -14,15 +14,11 @@ export async function POST(request: Request) {
       input: `
 You are StaffIntel AI.
 
-You are an elite staffing opportunity analyst.
+You are an elite B2B staffing sales consultant.
 
-Your purpose is NOT to summarize companies.
+Write a professional cold email for the staffing company below.
 
-Your purpose is to identify companies that are highly likely to require external staffing services.
-
-Analyze ONLY from a staffing perspective.
-
-Company Information
+Company:
 
 Name: ${company.name}
 Industry: ${company.industry}
@@ -32,36 +28,36 @@ Employees: ${company.employees}
 Hiring Signals:
 ${JSON.stringify(company.signals, null, 2)}
 
-Write:
-Write a concise staffing intelligence report.
+Requirements:
 
-Include:
+Write a concise email.
 
-1. Why this company is a strong staffing opportunity.
+Structure:
 
-2. The biggest hiring pain point.
+Subject:
 
-3. The best decision maker to contact.
+Greeting
 
-4. The recommended sales angle.
+Short personalized opening.
 
-5. A confidence level (High, Medium or Low).
+Mention ONE hiring challenge based on the hiring signals.
+
+Explain how our staffing company can help.
+
+End with a soft call-to-action.
+
+Keep it under 170 words.
 
 Return ONLY valid JSON.
 
 Use exactly this structure:
 
 {
-  "summary": "",
-  "painPoint": "",
-  "decisionMaker": "",
-  "salesAngle": "",
-  "confidence": ""
+  "subject": "",
+  "email": ""
 }
 
 Do not include markdown.
-
-Do not wrap the JSON in triple backticks.
 
 Return JSON only.
 `,
@@ -71,7 +67,7 @@ Return JSON only.
 
 return NextResponse.json({
     success: true,
-    insight: aiResult,
+    email: aiResult,
 });
 
   } catch (error) {
@@ -80,7 +76,7 @@ return NextResponse.json({
     return NextResponse.json(
       {
         success: false,
-        error: "Failed to generate insight",
+        error: "Failed to generate email",
       },
       { status: 500 }
     );

@@ -1,15 +1,18 @@
-import { calculateOpportunityScore, generateInsight, } from "@/lib/scoring";
+import { calculateOpportunityScore, } from "@/lib/scoring";
 
 interface RecommendationCardProps {
   company: any;
+  aiInsight: any;
+  onGenerateEmail: () => void;
 }
 
 export default function RecommendationCard({
   company,
+  aiInsight,
+  onGenerateEmail,
 }: RecommendationCardProps) {
 
   const result = calculateOpportunityScore(company.signals);
-  const insight = generateInsight(company);
 
   return (
     <div className="rounded-2xl border border-slate-800 bg-slate-900 p-8">
@@ -68,18 +71,50 @@ export default function RecommendationCard({
             AI Insight
           </h3>
 
-          <div className="rounded-xl bg-slate-800 p-5">
+          <div className="rounded-xl bg-slate-800 p-5 space-y-5">
 
-           <p className="leading-7 text-slate-300">
-  {insight}
-</p>
+  {!aiInsight ? (
 
-            <p className="mt-4 font-medium text-green-400">
-              Recommended first contact:
-{company.contact}
-            </p>
+    <p className="text-slate-400">
+      Analyzing company...
+    </p>
 
-          </div>
+  ) : (
+
+    <>
+
+      <div>
+        <h4 className="font-semibold text-white">Summary</h4>
+        <p className="text-slate-300">{aiInsight.summary}</p>
+      </div>
+
+      <div>
+        <h4 className="font-semibold text-white">Pain Point</h4>
+        <p className="text-slate-300">{aiInsight.painPoint}</p>
+      </div>
+
+      <div>
+        <h4 className="font-semibold text-white">Decision Maker</h4>
+        <p className="text-slate-300">{aiInsight.decisionMaker}</p>
+      </div>
+
+      <div>
+        <h4 className="font-semibold text-white">Sales Angle</h4>
+        <p className="text-slate-300">{aiInsight.salesAngle}</p>
+      </div>
+
+      <div>
+        <h4 className="font-semibold text-white">Confidence</h4>
+        <p className="text-green-400 font-semibold">
+          {aiInsight.confidence}
+        </p>
+      </div>
+
+    </>
+
+  )}
+
+</div>
 
         </div>
 
@@ -87,9 +122,12 @@ export default function RecommendationCard({
 
       <div className="mt-10 flex gap-4">
 
-        <button className="rounded-lg bg-blue-600 px-6 py-3 font-semibold hover:bg-blue-700">
-          ✉️ Draft Email
-        </button>
+       <button
+  onClick={onGenerateEmail}
+  className="rounded-lg bg-blue-600 px-6 py-3 font-semibold hover:bg-blue-700"
+>
+  ✉️ Draft Email
+</button>
 
         <button className="rounded-lg bg-slate-700 px-6 py-3 font-semibold hover:bg-slate-600">
           💼 Draft LinkedIn Message
