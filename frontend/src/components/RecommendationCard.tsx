@@ -1,7 +1,14 @@
-import { getTopCompany } from "@/lib/ranking";
-export default function RecommendationCard() {
+import { calculateOpportunityScore } from "@/lib/scoring";
 
-    const company = getTopCompany();
+interface RecommendationCardProps {
+  company: any;
+}
+
+export default function RecommendationCard({
+  company,
+}: RecommendationCardProps) {
+
+  const result = calculateOpportunityScore(company.signals);
 
   return (
     <div className="rounded-2xl border border-slate-800 bg-slate-900 p-8">
@@ -31,7 +38,7 @@ export default function RecommendationCard() {
           </p>
 
           <h2 className="text-5xl font-bold">
-            {company.score}
+            {result.score}
           </h2>
 
         </div>
@@ -47,7 +54,7 @@ export default function RecommendationCard() {
           </h3>
 
         <ul className="space-y-3 text-slate-300">
-  {company.reasons.map((reason) => (
+  {result.reasons.map((reason) => (
     <li key={reason}>✅ {reason}</li>
   ))}
 </ul>
@@ -62,15 +69,15 @@ export default function RecommendationCard() {
 
           <div className="rounded-xl bg-slate-800 p-5">
 
-            <p className="leading-7 text-slate-300">
-              Acme AI shows multiple hiring signals that
-              historically correlate with companies using
-              external staffing partners.
-            </p>
+           <p className="leading-7 text-slate-300">
+  {company.name} shows multiple hiring signals that
+  historically correlate with companies using
+  external staffing partners.
+</p>
 
             <p className="mt-4 font-medium text-green-400">
               Recommended first contact:
-              Founder or CEO
+{company.contact}
             </p>
 
           </div>

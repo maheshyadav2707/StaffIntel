@@ -1,10 +1,11 @@
 export const sampleCompanies = [
   {
-    name: "Acme AI",
-    industry: "AI Infrastructure",
-    location: "California",
-    employees: 18,
-    signals: {
+  name: "Acme AI",
+  industry: "AI Infrastructure",
+  location: "California",
+  employees: 18,
+  contact: "Founder or CEO",
+  signals: {
       openJobs: 18,
       oldJobs: 7,
       recentlyFunded: true,
@@ -18,7 +19,8 @@ export const sampleCompanies = [
     industry: "Cloud Services",
     location: "Texas",
     employees: 12,
-    signals: {
+contact: "CTO",
+signals: {
       openJobs: 14,
       oldJobs: 6,
       recentlyFunded: false,
@@ -32,7 +34,8 @@ export const sampleCompanies = [
     industry: "Cybersecurity",
     location: "Florida",
     employees: 16,
-    signals: {
+contact: "Head of Engineering",
+signals: {
       openJobs: 9,
       oldJobs: 2,
       recentlyFunded: true,
@@ -46,6 +49,7 @@ export const sampleCompanies = [
     industry: "Machine Learning",
     location: "New York",
     employees: 11,
+    contact: "VP Engineering",
     signals: {
       openJobs: 21,
       oldJobs: 8,
@@ -60,6 +64,7 @@ export const sampleCompanies = [
     industry: "Software",
     location: "Washington",
     employees: 19,
+    contact: "Director of Talent",
     signals: {
       openJobs: 12,
       oldJobs: 4,
