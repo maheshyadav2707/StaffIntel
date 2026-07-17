@@ -10,7 +10,7 @@ import { sampleCompanies } from "@/data/sampleCompanies";
 
 export default function Home() {
 
-  const [selectedCompany, setSelectedCompany] = useState(sampleCompanies[0]);
+  const [selectedCompany, setSelectedCompany] = useState<any>(null);
   const [aiInsight, setAiInsight] = useState<any>(null);
   const [emailDraft, setEmailDraft] = useState<any>(null);
   const [showEmailModal, setShowEmailModal] = useState(false);

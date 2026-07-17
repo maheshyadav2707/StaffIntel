@@ -1,5 +1,7 @@
+import { useEffect, useState } from "react";
+import { getLiveCompanies } from "../lib/jobs/getLiveCompanies";
 import { sampleCompanies } from "@/data/sampleCompanies";
-import { calculateOpportunityScore } from "@/lib/scoring";
+import { calculateOpportunityScore } from "../lib/scoring";
 
 interface ProspectListProps {
   selectedCompany: any;
@@ -10,13 +12,43 @@ export default function ProspectList({
   selectedCompany,
   onSelectCompany,
 }: ProspectListProps) {
+  const [companies, setCompanies] = useState<any[]>([]);
 
-  const rankedCompanies = sampleCompanies
-    .map(company => ({
-      ...company,
-      score: calculateOpportunityScore(company.signals).score
-    }))
-    .sort((a, b) => b.score - a.score);
+useEffect(() => {
+  async function loadCompanies() {
+    try {
+      const data = await getLiveCompanies();
+      console.log("Live jobs:", data);
+      setCompanies(data);
+  if (data.length > 0) {
+  console.log("Selecting first company:", data[0]);
+  onSelectCompany(data[0]);
+}
+    } catch (error) {
+      console.error("Failed to load live jobs:", error);
+    }
+  }
+
+  loadCompanies();
+}, []);
+
+const sourceCompanies =
+  companies.length > 0 ? companies : sampleCompanies;
+
+const rankedCompanies = sourceCompanies
+  .map((company: any) => ({
+    ...company,
+    score: calculateOpportunityScore(
+  company.signals ?? {
+    openJobs: 1,
+    oldJobs: 0,
+    recentlyFunded: false,
+    hasTalentLeader: true,
+    hiringGrowth: 0,
+  }
+).score,
+  }))
+  .sort((a, b) => b.score - a.score);
 
   return (
 
@@ -34,7 +66,7 @@ export default function ProspectList({
   key={company.name}
   onClick={() => onSelectCompany(company)}
   className={`w-full rounded-xl p-4 text-left transition ${
-    selectedCompany.name === company.name
+    selectedCompany?.name === company.name
       ? "bg-blue-600"
       : "bg-slate-800 hover:bg-slate-700"
   }`}

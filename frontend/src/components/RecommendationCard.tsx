@@ -1,4 +1,4 @@
-import { calculateOpportunityScore, } from "@/lib/scoring";
+import { calculateOpportunityScore, } from "../lib/scoring";
 
 interface RecommendationCardProps {
   company: any;
@@ -11,6 +11,14 @@ export default function RecommendationCard({
   aiInsight,
   onGenerateEmail,
 }: RecommendationCardProps) {
+
+  if (!company) {
+  return (
+    <div className="rounded-2xl border border-slate-800 bg-slate-900 p-8">
+      <p className="text-slate-400">Loading recommendation...</p>
+    </div>
+  );
+}
 
   const result = calculateOpportunityScore(company.signals);
 
