@@ -1,5 +1,6 @@
 "use client";
 
+import { calculateResponseScore } from "../lib/responseScore";
 import { useState, useEffect } from "react";
 import ProspectList from "@/components/ProspectList";
 import StatsGrid from "@/components/StatsGrid";

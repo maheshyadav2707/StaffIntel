@@ -48,6 +48,8 @@ employees:
 signals: {
   openJobs: 0,
   oldJobs: 0,
+  remoteJobs: 0,
+  jobTypes: new Set<string>(),
   recentlyFunded: false,
   hasTalentLeader: false,
   hiringGrowth: 0,

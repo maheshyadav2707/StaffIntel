@@ -1,4 +1,4 @@
-import { calculateOpportunityScore, } from "../lib/scoring";
+import { calculateIntelligence } from "@/lib/intelligence/engine";
 
 interface RecommendationCardProps {
   company: any;
@@ -20,7 +20,7 @@ export default function RecommendationCard({
   );
 }
 
-  const result = calculateOpportunityScore(company.signals);
+const intelligence = calculateIntelligence(company);
 
   return (
     <div className="rounded-2xl border border-slate-800 bg-slate-900 p-8">
@@ -43,19 +43,36 @@ export default function RecommendationCard({
 
         </div>
 
-        <div className="rounded-xl bg-blue-600 px-6 py-4 text-center">
+        <div className="grid grid-cols-2 gap-4">
 
-          <p className="text-sm">
-            Opportunity Score
-          </p>
+  <div className="rounded-xl bg-blue-600 px-6 py-4 text-center">
+    <p className="text-sm">
+      Opportunity Score
+    </p>
 
-          <h2 className="text-5xl font-bold">
-            {result.score}
-          </h2>
+    <h2 className="text-5xl font-bold">
+      {intelligence.opportunityScore}
+    </h2>
+  </div>
 
-        </div>
+  <div className="rounded-xl bg-green-600 px-6 py-4 text-center">
+    <p className="text-sm">
+      Response Score
+    </p>
 
+    <h2 className="text-5xl font-bold">
+      {intelligence.responseScore}
+    </h2>
+  </div>
+
+</div>
       </div>
+      <p className="mt-4 text-sm text-slate-400">
+  Confidence:
+  <span className="ml-2 font-semibold text-green-400">
+    {intelligence.confidence}
+  </span>
+</p>
 
       <div className="grid grid-cols-2 gap-8 mt-10">
 
@@ -66,7 +83,7 @@ export default function RecommendationCard({
           </h3>
 
         <ul className="space-y-3 text-slate-300">
-  {result.reasons.map((reason) => (
+  {intelligence.reasons.map((reason) => (
     <li key={reason}>✅ {reason}</li>
   ))}
 </ul>
