@@ -49,28 +49,20 @@ async function searchRealCompany() {
   console.log("Company returned:", data.company);
 
 if (data.success) {
-  const realCompany = {
-    name: data.company.about?.name,
+const realCompany = {
+  name: data.company.name,
 
-    industry: data.company.about?.industry,
+  industry: data.company.industry,
 
-    location:
-      data.company.locations?.headquarters?.city ||
-      data.company.locations?.headquarters?.address,
+  location: data.company.location,
 
-    employees:
-      data.company.about?.totalEmployeesExact || 0,
+  employees: data.company.employees,
 
-    contact: "VP Engineering",
+  contact: data.company.contact,
 
-    signals: {
-      openJobs: 0,
-      oldJobs: 0,
-      noTalentLeader: true,
-      funding: false,
-      hiringGrowth: 0,
-    },
-  };
+  signals: data.company.signals,
+};
+
 
   console.log(realCompany);
 

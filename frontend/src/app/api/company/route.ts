@@ -20,14 +20,14 @@ export async function POST(request: Request) {
 const data = await response.json();
 
 const companyData = data.companies?.[0];
-console.log("Matched company:", companyData);
+console.log(JSON.stringify(companyData, null, 2));
 
 if (!companyData) {
   throw new Error("Company not found");
 }
 
 const mappedCompany = {
-  name: companyData.name,
+  name: companyData.about?.name ?? "Unknown Company",
 
   industry:
     companyData.about?.industry ??
@@ -39,20 +39,19 @@ location:
   companyData.locations?.headquarters?.state?.name ??
   "Unknown",
 
-  employees:
-    companyData.totalEmployeesExact ??
-    companyData.totalEmployees ??
+employees:
+    companyData.about?.totalEmployeesExact ??
     0,
 
   contact: "VP Engineering",
 
-  signals: {
-    openJobs: 0,
-    oldJobs: 0,
-    funding: false,
-    hiringGrowth: 0,
-    noTalentLeader: true,
-  },
+signals: {
+  openJobs: 0,
+  oldJobs: 0,
+  recentlyFunded: false,
+  hasTalentLeader: false,
+  hiringGrowth: 0,
+},
 };
 
 return NextResponse.json({
