@@ -23,6 +23,12 @@ export default function RecommendationCard({
 }
 
 const intelligence = calculateIntelligence(company);
+const recommendationColor = {
+  "Hot Prospect": "text-red-400",
+  "Good Prospect": "text-orange-400",
+  "Watch List": "text-yellow-400",
+  "Low Priority": "text-slate-400",
+}[intelligence.recommendation];
 
   return (
     <div className="rounded-2xl border border-slate-800 bg-slate-900 p-8">
@@ -35,9 +41,12 @@ const intelligence = calculateIntelligence(company);
             ⭐ Today's Recommendation
           </p>
 
-          <h2 className="mt-3 text-4xl font-bold">
-            {company.name}
-          </h2>
+          <p className={`mt-2 text-lg font-semibold ${recommendationColor}`}>
+  🔥 {intelligence.recommendation}
+</p>
+          <p className="mt-2 inline-block rounded-full bg-orange-500/20 px-3 py-1 text-sm font-semibold text-orange-400">
+  🔥 {intelligence.recommendation}
+</p>
 
           <p className="mt-2 text-slate-400">
             {company.industry} • {company.location} • {company.employees} Employees
@@ -49,7 +58,7 @@ const intelligence = calculateIntelligence(company);
 
   <div className="rounded-xl bg-blue-600 px-6 py-4 text-center">
     <p className="text-sm">
-      Opportunity Score
+      Opportunity
     </p>
 
     <h2 className="text-5xl font-bold">
@@ -59,7 +68,7 @@ const intelligence = calculateIntelligence(company);
 
   <div className="rounded-xl bg-green-600 px-6 py-4 text-center">
     <p className="text-sm">
-      Response Score
+      Response Probability
     </p>
 
     <h2 className="text-5xl font-bold">
@@ -69,12 +78,13 @@ const intelligence = calculateIntelligence(company);
 
 </div>
       </div>
-      <p className="mt-4 text-sm text-slate-400">
-  Confidence:
-  <span className="ml-2 font-semibold text-green-400">
+      <div className="mt-4 flex items-center gap-3">
+  <span className="text-slate-400">Confidence</span>
+
+  <span className="rounded-full bg-green-500/20 px-3 py-1 text-sm font-semibold text-green-400">
     {intelligence.confidence}
   </span>
-</p>
+</div>
 
       <div className="grid grid-cols-2 gap-8 mt-10">
 
