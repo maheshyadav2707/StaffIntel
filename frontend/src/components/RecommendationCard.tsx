@@ -29,7 +29,12 @@ const recommendationColor = {
   "Watch List": "text-yellow-400",
   "Low Priority": "text-slate-400",
 }[intelligence.recommendation];
-
+const recommendationIcon = {
+  "Hot Prospect": "🔥",
+  "Good Prospect": "⭐",
+  "Watch List": "👀",
+  "Low Priority": "📋",
+}[intelligence.recommendation];
   return (
     <div className="rounded-2xl border border-slate-800 bg-slate-900 p-8">
 
@@ -42,7 +47,7 @@ const recommendationColor = {
           </p>
 
           <p className={`mt-2 text-lg font-semibold ${recommendationColor}`}>
-  🔥 {intelligence.recommendation}
+  🔥 {recommendationIcon} {intelligence.recommendation}
 </p>
           <p className="mt-2 inline-block rounded-full bg-orange-500/20 px-3 py-1 text-sm font-semibold text-orange-400">
   🔥 {intelligence.recommendation}
