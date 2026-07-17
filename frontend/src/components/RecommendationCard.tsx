@@ -1,8 +1,10 @@
 import { calculateIntelligence } from "@/lib/intelligence/engine";
+import { Company } from "@/types/company";
+import { AIInsight } from "@/types/aiInsight";
 
 interface RecommendationCardProps {
-  company: any;
-  aiInsight: any;
+company: Company;
+aiInsight: AIInsight | null;
   onGenerateEmail: () => void;
 }
 
@@ -25,7 +27,7 @@ const intelligence = calculateIntelligence(company);
   return (
     <div className="rounded-2xl border border-slate-800 bg-slate-900 p-8">
 
-      <div className="flex items-center justify-between">
+      <div>
 
         <div>
 
@@ -43,7 +45,7 @@ const intelligence = calculateIntelligence(company);
 
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="mt-6 grid grid-cols-2 gap-4">
 
   <div className="rounded-xl bg-blue-600 px-6 py-4 text-center">
     <p className="text-sm">
