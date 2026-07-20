@@ -1,5 +1,6 @@
 export const sampleCompanies = [
   {
+  id: "acme-ai",
   name: "Acme AI",
   industry: "AI Infrastructure",
   location: "California",
@@ -15,6 +16,7 @@ export const sampleCompanies = [
   },
 
   {
+    id: "cloudnova",
     name: "CloudNova",
     industry: "Cloud Services",
     location: "Texas",
@@ -30,6 +32,7 @@ signals: {
   },
 
   {
+    id: "quantum-stack",
     name: "Quantum Stack",
     industry: "Cybersecurity",
     location: "Florida",
@@ -45,6 +48,7 @@ signals: {
   },
 
   {
+    id: "databridge-ai",
     name: "DataBridge AI",
     industry: "Machine Learning",
     location: "New York",
@@ -60,6 +64,7 @@ signals: {
   },
 
   {
+    id: "vertex-systems",
     name: "Vertex Systems",
     industry: "Software",
     location: "Washington",

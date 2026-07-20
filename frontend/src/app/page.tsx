@@ -8,6 +8,8 @@ import RecommendationCard from "@/components/RecommendationCard";
 import Header from "@/components/Header";
 import Sidebar from "@/components/Sidebar";
 import { sampleCompanies } from "@/data/sampleCompanies";
+import DecisionMakerCard from "@/components/DecisionMakerCard";
+import { sampleDecisionMakers } from "@/lib/sampleDecisionMakers";
 
 export default function Home() {
 
@@ -148,11 +150,27 @@ return (
 
   <div className="col-span-2">
   <RecommendationCard
-  company={selectedCompany}
-  aiInsight={aiInsight}
-  onGenerateEmail={() => generateEmail(selectedCompany)}
-/>
+    company={selectedCompany}
+    aiInsight={aiInsight}
+    onGenerateEmail={() => generateEmail(selectedCompany)}
+  />
+
+  <div className="mt-6">
+    <h2 className="text-lg font-semibold text-white mb-4">
+      Decision Makers
+    </h2>
+
+   {selectedCompany &&
+  sampleDecisionMakers
+    .filter((person) => person.companyId === selectedCompany.id)
+    .map((person) => (
+      <DecisionMakerCard
+        key={person.id}
+        person={person}
+      />
+    ))}
   </div>
+</div>
 
 </div>
 
