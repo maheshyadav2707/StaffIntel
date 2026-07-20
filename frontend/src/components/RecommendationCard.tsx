@@ -46,12 +46,21 @@ const recommendationIcon = {
             ⭐ Today's Recommendation
           </p>
 
-          <p className={`mt-2 text-lg font-semibold ${recommendationColor}`}>
-  🔥 {recommendationIcon} {intelligence.recommendation}
-</p>
-          <p className="mt-2 inline-block rounded-full bg-orange-500/20 px-3 py-1 text-sm font-semibold text-orange-400">
-  🔥 {intelligence.recommendation}
-</p>
+          <div className="mt-2 flex items-center gap-3">
+  <span
+    className={`inline-flex items-center rounded-full px-3 py-1 text-sm font-semibold ${
+      intelligence.recommendation === "Hot Prospect"
+        ? "bg-red-500/20 text-red-400"
+        : intelligence.recommendation === "Good Prospect"
+        ? "bg-orange-500/20 text-orange-400"
+        : intelligence.recommendation === "Watch List"
+        ? "bg-yellow-500/20 text-yellow-400"
+        : "bg-slate-500/20 text-slate-400"
+    }`}
+  >
+    {recommendationIcon} {intelligence.recommendation}
+  </span>
+</div>
 
           <p className="mt-2 text-slate-400">
             {company.industry} • {company.location} • {company.employees} Employees
@@ -70,6 +79,20 @@ const recommendationIcon = {
     {intelligence.overallScore}
   </h2>
 </div>
+
+<p
+  className={`mt-2 inline-block rounded-full px-3 py-1 text-sm font-semibold ${
+    intelligence.grade.startsWith("A")
+      ? "bg-green-500/20 text-green-400"
+      : intelligence.grade.startsWith("B")
+      ? "bg-blue-500/20 text-blue-400"
+      : intelligence.grade.startsWith("C")
+      ? "bg-yellow-500/20 text-yellow-400"
+      : "bg-red-500/20 text-red-400"
+  }`}
+>
+  Grade {intelligence.grade}
+</p>
 
   <div className="rounded-xl bg-green-600 px-6 py-4 text-center">
     <p className="text-sm">
@@ -94,6 +117,16 @@ const recommendationIcon = {
       <div className="grid grid-cols-2 gap-8 mt-10">
 
         <div>
+
+          <div className="mb-6 rounded-lg bg-blue-500/10 border border-blue-500/20 p-4">
+  <p className="text-sm font-semibold text-blue-400">
+    💡 Why this prospect?
+  </p>
+
+  <p className="mt-2 text-slate-300">
+    {intelligence.whyThisProspect}
+  </p>
+</div>
 
           <h3 className="font-semibold mb-4">
             Why today?
