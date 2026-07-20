@@ -49,10 +49,10 @@ signals: {
   openJobs: 0,
   oldJobs: 0,
   remoteJobs: 0,
-  jobTypes: new Set<string>(),
+  jobTypes: [],
   recentlyFunded: false,
   hasTalentLeader: false,
-  hiringGrowth: 0,
+  hiringGrowth: false,
 },
 };
 

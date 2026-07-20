@@ -62,14 +62,14 @@ const recommendationIcon = {
         <div className="mt-6 grid grid-cols-2 gap-4">
 
   <div className="rounded-xl bg-blue-600 px-6 py-4 text-center">
-    <p className="text-sm">
-      Opportunity
-    </p>
+  <p className="text-sm">
+    Overall Intelligence
+  </p>
 
-    <h2 className="text-5xl font-bold">
-      {intelligence.opportunityScore}
-    </h2>
-  </div>
+  <h2 className="text-5xl font-bold">
+    {intelligence.overallScore}
+  </h2>
+</div>
 
   <div className="rounded-xl bg-green-600 px-6 py-4 text-center">
     <p className="text-sm">

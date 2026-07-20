@@ -5,9 +5,52 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
+const insightCache = new Map<
+  string,
+  {
+    insight: any;
+    timestamp: number;
+  }
+>();
+
+const INSIGHT_CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 hours
+
 export async function POST(request: Request) {
   try {
     const company = await request.json();
+ // 👇 Add the cache check here
+
+  const cacheKey = [
+  company.name,
+  company.signals.openJobs,
+  company.signals.oldJobs,
+  company.signals.remoteJobs,
+  company.signals.hiringGrowth,
+  company.signals.recentlyFunded,
+  company.signals.hasTalentLeader,
+  ...(company.signals.jobTypes ?? []),
+].join("|");
+
+console.log("Company:", company.name);
+console.log("Cache Key:", cacheKey);
+
+const cached = insightCache.get(cacheKey);
+
+console.log("Cache Hit:", !!cached);
+
+    if (
+      cached &&
+      Date.now() - cached.timestamp < INSIGHT_CACHE_DURATION
+    ) {
+      console.log(`Returning cached insight for ${company.name}`);
+
+      return NextResponse.json({
+        success: true,
+        insight: cached.insight,
+      });
+    }
+
+    // 👇 Existing OpenAI call stays exactly as it is
 
     const response = await openai.responses.create({
       model: "gpt-5.5",
@@ -67,11 +110,19 @@ Return JSON only.
 `,
     });
 
-  const aiResult = JSON.parse(response.output_text);
+const aiResult = JSON.parse(response.output_text);
+
+// Save to cache
+insightCache.set(cacheKey, {
+  insight: aiResult,
+  timestamp: Date.now(),
+});
+
+console.log(`Fresh AI insight stored for ${company.name}`);
 
 return NextResponse.json({
-    success: true,
-    insight: aiResult,
+  success: true,
+  insight: aiResult,
 });
 
   } catch (error) {

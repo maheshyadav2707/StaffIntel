@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { getLiveCompanies } from "../lib/jobs/getLiveCompanies";
 import { sampleCompanies } from "@/data/sampleCompanies";
 import { calculateOpportunityScore } from "../lib/scoring";
+import { calculateIntelligence } from "@/lib/intelligence/engine";
 
 interface ProspectListProps {
   selectedCompany: any;
@@ -38,15 +39,7 @@ const sourceCompanies =
 const rankedCompanies = sourceCompanies
   .map((company: any) => ({
     ...company,
-    score: calculateOpportunityScore(
-  company.signals ?? {
-    openJobs: 1,
-    oldJobs: 0,
-    recentlyFunded: false,
-    hasTalentLeader: true,
-    hiringGrowth: 0,
-  }
-).score,
+   score: calculateIntelligence(company).overallScore,
   }))
   .sort((a, b) => b.score - a.score);
 

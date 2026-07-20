@@ -105,9 +105,6 @@ const realCompany = {
 
   console.log(data);
 }
-useEffect(() => {
-  testCompanyAPI();
-}, []);
 return (
   <>
     <main className="flex min-h-screen bg-slate-950 text-white">

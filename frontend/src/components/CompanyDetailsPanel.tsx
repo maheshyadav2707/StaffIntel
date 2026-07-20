@@ -25,7 +25,10 @@ export default function CompanyDetailsPanel({
       </p>
 
       <div className="grid grid-cols-2 gap-4 mt-6">
-  <MetricCard title="Opportunity" value={intelligence.opportunityScore} />
+ <MetricCard
+  title="Overall"
+  value={intelligence.overallScore}
+/>
   <MetricCard title="Response" value={intelligence.responseScore} />
   <MetricCard title="Friendliness" value={intelligence.staffingFriendliness} />
   <MetricCard title="Momentum" value={intelligence.hiringMomentum} />
