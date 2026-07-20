@@ -61,6 +61,7 @@ if (cached && now - cached.timestamp < CACHE_DURATION) {
   const query = encodeURIComponent(`${companyName} jobs`);
 
   const response = await fetch(
+  
     `https://jsearch.p.rapidapi.com/search-v2?query=${query}&country=us&num_pages=1&date_posted=all`,
     {
       headers: {
@@ -70,10 +71,24 @@ if (cached && now - cached.timestamp < CACHE_DURATION) {
       },
     }
   );
+  console.log(
+  `JSearch enrichment status for ${companyName}:`,
+  response.status
+);
 
   if (!response.ok) {
-    throw new Error(`JSearch enrichment failed for ${companyName}`);
-  }
+  const errorBody = await response.text();
+
+  console.error("JSearch enrichment failed:", {
+    company: companyName,
+    status: response.status,
+    body: errorBody,
+  });
+
+  throw new Error(
+    `JSearch enrichment failed (${response.status}) for ${companyName}`
+  );
+}
 
  const data = await response.json();
 
@@ -149,41 +164,50 @@ if (topCandidates.length > 0) {
   });
 }
 for (const company of topCandidates) {
-  const enrichmentData = await fetchCompanyJobs(company.name);
+  try {
+    const enrichmentData = await fetchCompanyJobs(company.name);
 
-  const enrichedJobs = enrichmentData.data?.jobs || [];
+    const enrichedJobs = enrichmentData.data?.jobs || [];
 
-  company.signals.openJobs = enrichedJobs.length;
+    company.signals.openJobs = enrichedJobs.length;
 
-  company.signals.remoteJobs = enrichedJobs.filter(
-    (job: any) => job.job_is_remote === true
-  ).length;
+    company.signals.remoteJobs = enrichedJobs.filter(
+      (job: any) => job.job_is_remote === true
+    ).length;
 
-  company.signals.jobTypes = [
-    ...new Set(
-      enrichedJobs
-        .map((job: any) => job.job_employment_type)
-        .filter(Boolean)
-    ),
-  ] as string[];
+    company.signals.jobTypes = [
+      ...new Set(
+        enrichedJobs
+          .map((job: any) => job.job_employment_type)
+          .filter(Boolean)
+      ),
+    ] as string[];
 
-  const fortyFiveDaysAgo =
-    Date.now() - 45 * 24 * 60 * 60 * 1000;
+    const fortyFiveDaysAgo =
+      Date.now() - 45 * 24 * 60 * 60 * 1000;
 
-  company.signals.oldJobs = enrichedJobs.filter((job: any) => {
-    if (!job.job_posted_at) return false;
+    company.signals.oldJobs = enrichedJobs.filter((job: any) => {
+      if (!job.job_posted_at) return false;
 
-    const postedDate = new Date(job.job_posted_at).getTime();
+      const postedDate = new Date(job.job_posted_at).getTime();
 
-    return postedDate < fortyFiveDaysAgo;
-  }).length;
+      return postedDate < fortyFiveDaysAgo;
+    }).length;
 
-  console.log(`Enriched signals for ${company.name}:`, {
-    openJobs: company.signals.openJobs,
-    oldJobs: company.signals.oldJobs,
-    remoteJobs: company.signals.remoteJobs,
-    jobTypes: company.signals.jobTypes,
-  });
+    console.log(`Enriched signals for ${company.name}:`, {
+      openJobs: company.signals.openJobs,
+      oldJobs: company.signals.oldJobs,
+      remoteJobs: company.signals.remoteJobs,
+      jobTypes: company.signals.jobTypes,
+    });
+  } catch (error) {
+    console.error(
+      `Skipping enrichment for ${company.name}:`,
+      error
+    );
+
+    continue;
+  }
 }
 return NextResponse.json(jobs);
 

@@ -9,7 +9,7 @@ import Header from "@/components/Header";
 import Sidebar from "@/components/Sidebar";
 import { sampleCompanies } from "@/data/sampleCompanies";
 import DecisionMakerCard from "@/components/DecisionMakerCard";
-import { sampleDecisionMakers } from "@/lib/sampleDecisionMakers";
+import { getDecisionMakers } from "@/lib/contactIntelligence";
 
 export default function Home() {
 
@@ -160,15 +160,14 @@ return (
       Decision Makers
     </h2>
 
-   {selectedCompany &&
-  sampleDecisionMakers
-    .filter((person) => person.companyId === selectedCompany.id)
-    .map((person) => (
-      <DecisionMakerCard
-        key={person.id}
-        person={person}
-      />
-    ))}
+ {selectedCompany &&
+ getDecisionMakers(selectedCompany).map((person, index) => (
+  <DecisionMakerCard
+    key={person.id}
+    person={person}
+    isTopRecommendation={index === 0}
+  />
+))}
   </div>
 </div>
 

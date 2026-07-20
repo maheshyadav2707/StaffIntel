@@ -3,9 +3,13 @@ import { DecisionMaker } from "@/types/decisionMaker";
 
 type Props = {
   person: DecisionMaker;
+  isTopRecommendation?: boolean;
 };
 
-export default function DecisionMakerCard({ person }: Props) {
+export default function DecisionMakerCard({
+  person,
+  isTopRecommendation = false,
+}: Props) {
     const [showReasons, setShowReasons] = useState(false);
 return (
   <div className="rounded-xl border border-zinc-800 bg-zinc-900 p-4 mb-3">
@@ -59,6 +63,12 @@ return (
         <p className="text-xs text-zinc-500 mt-2">
           {person.confidence}% Match
         </p>
+
+        {person.score !== undefined && (
+  <p className="text-xs text-cyan-400 font-medium mt-1">
+    Contact Score: {person.score}
+  </p>
+)}
       </div>
 
     </div>

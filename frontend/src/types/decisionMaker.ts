@@ -11,6 +11,8 @@ export interface DecisionMaker {
 
   confidence: number;
 
+  score?: number;
+
   recommendation?: string;
 
   reasons?: string[];
