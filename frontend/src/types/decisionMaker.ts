@@ -8,7 +8,7 @@ export interface DecisionMaker {
   department: string;
 
   priority: "High" | "Medium" | "Low";
-
+  qualification?: "Qualified" | "Possible" | "Low Priority" | "Disqualified";
   confidence: number;
 
   score?: number;
@@ -18,6 +18,7 @@ export interface DecisionMaker {
   priority: number;
   role: number;
   companyContext: number;
+  qualificationAdjustment: number;
 };
 
   isTopRecommendation?: boolean;

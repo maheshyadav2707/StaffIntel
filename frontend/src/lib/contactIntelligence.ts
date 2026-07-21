@@ -9,6 +9,7 @@ type ContactScoreResult = {
     priority: number;
     role: number;
     companyContext: number;
+    qualificationAdjustment: number;
   };
 };
 
@@ -17,7 +18,58 @@ function discoverContacts(companyId: string): DecisionMaker[] {
     (person) => person.companyId === companyId
   );
 }
+function qualifyContact(
+  person: DecisionMaker
+): "Qualified" | "Possible" | "Low Priority" | "Disqualified" {
+  const title = person.title.toLowerCase();
 
+  // Strong staffing decision makers
+  if (
+    title.includes("ceo") ||
+    title.includes("founder") ||
+    title.includes("cto") ||
+    title.includes("head of talent") ||
+    title.includes("head of recruiting") ||
+    title.includes("talent acquisition") ||
+    title.includes("vp engineering") ||
+    title.includes("vp of engineering") ||
+    title.includes("head of engineering") ||
+    title.includes("director of talent") ||
+    title.includes("director of recruiting")
+  ) {
+    return "Qualified";
+  }
+
+  // People who may influence hiring
+  if (
+    title.includes("director of engineering") ||
+    title.includes("engineering manager") ||
+    title.includes("hiring manager") ||
+    title.includes("hr manager")
+  ) {
+    return "Possible";
+  }
+
+  // Weak buying authority
+  if (
+    title.includes("recruiter") ||
+    title.includes("coordinator") ||
+    title.includes("specialist")
+  ) {
+    return "Low Priority";
+  }
+
+  // Individual contributors / unlikely staffing buyers
+  if (
+    title.includes("engineer") ||
+    title.includes("developer") ||
+    title.includes("intern")
+  ) {
+    return "Disqualified";
+  }
+
+  return "Possible";
+}
 function calculateContactScore(
   person: DecisionMaker,
   company: {
@@ -145,6 +197,7 @@ return {
     priority: priorityScore,
     role: roleScore,
     companyContext: companyContextScore,
+    qualificationAdjustment: 0,
   },
 };
 }
@@ -160,17 +213,34 @@ function rankContacts(
   }
 ): DecisionMaker[] {
   const rankedContacts = contacts
-    .map((person) => {
-      const result = calculateContactScore(person, company);
+  .map((person) => {
+    const result = calculateContactScore(person, company);
+const qualification = qualifyContact(person);
 
-      return {
-        ...person,
-        score: result.score,
-        scoreBreakdown: result.scoreBreakdown,
-        reasons: result.reasons,
-        
-      };
-    })
+let adjustedScore = result.score;
+let qualificationAdjustment = 0;
+
+if (qualification === "Low Priority") {
+  qualificationAdjustment = -25;
+}
+
+if (qualification === "Disqualified") {
+  qualificationAdjustment = -100;
+}
+
+adjustedScore += qualificationAdjustment;
+
+    return {
+      ...person,
+      qualification,
+      score: adjustedScore,
+      scoreBreakdown: {
+  ...result.scoreBreakdown,
+  qualificationAdjustment,
+},
+      reasons: result.reasons,
+    };
+  })
     .sort((a, b) => (b.score ?? 0) - (a.score ?? 0));
 
   return rankedContacts.map((person, index) => {

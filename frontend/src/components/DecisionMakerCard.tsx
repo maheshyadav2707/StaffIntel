@@ -34,6 +34,21 @@ return (
           <p className="text-sm text-zinc-400">
             {person.title}
           </p>
+          {person.qualification && (
+  <span
+    className={`mt-2 inline-flex rounded-full px-2 py-1 text-xs font-medium ${
+      person.qualification === "Qualified"
+        ? "bg-green-500/20 text-green-400"
+        : person.qualification === "Possible"
+        ? "bg-blue-500/20 text-blue-400"
+        : person.qualification === "Low Priority"
+        ? "bg-yellow-500/20 text-yellow-400"
+        : "bg-red-500/20 text-red-400"
+    }`}
+  >
+    {person.qualification}
+  </span>
+)}
 
           <p className="text-xs text-zinc-500 mt-1">
             {person.department}
@@ -70,7 +85,7 @@ return (
         </p>
 
         {person.score !== undefined && (
-  <p className="text-xs text-cyan-400 font-medium mt-1">
+  <div className="text-xs text-cyan-400 font-medium mt-1">
     <button
   onClick={() => setShowScoreBreakdown(!showScoreBreakdown)}
   className="text-sm text-zinc-400 hover:text-white transition"
@@ -84,10 +99,16 @@ return (
 {showScoreBreakdown && person.scoreBreakdown && (
   <div className="mt-3 rounded-lg border border-zinc-800 bg-zinc-950 p-3 text-sm">
 
-    <div className="flex justify-between">
-      <span className="text-zinc-400">Confidence</span>
-      <span>+{person.scoreBreakdown.confidence}</span>
-    </div>
+    {person.scoreBreakdown.qualificationAdjustment !== 0 && (
+  <div className="flex justify-between">
+    <span className="text-zinc-400">
+      Qualification Adjustment
+    </span>
+    <span>
+      {person.scoreBreakdown.qualificationAdjustment}
+    </span>
+  </div>
+)}
 
     <div className="flex justify-between">
       <span className="text-zinc-400">Priority</span>
@@ -111,7 +132,7 @@ return (
 
   </div>
 )}
-  </p>
+  </div>
 )}
       </div>
 
