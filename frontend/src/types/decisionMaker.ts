@@ -13,6 +13,13 @@ export interface DecisionMaker {
 
   score?: number;
 
+  scoreBreakdown?: {
+  confidence: number;
+  priority: number;
+  role: number;
+  companyContext: number;
+};
+
   isTopRecommendation?: boolean;
 
   recommendation?: string;

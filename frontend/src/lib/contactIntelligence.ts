@@ -4,6 +4,12 @@ import { sampleDecisionMakers } from "@/lib/sampleDecisionMakers";
 type ContactScoreResult = {
   score: number;
   reasons: string[];
+  scoreBreakdown: {
+    confidence: number;
+    priority: number;
+    role: number;
+    companyContext: number;
+  };
 };
 
 function discoverContacts(companyId: string): DecisionMaker[] {
@@ -25,15 +31,20 @@ function calculateContactScore(
   let score = person.confidence;
 
   const reasons: string[] = [];
+  let priorityScore = 0;
+let roleScore = 0;
+let companyContextScore = 0;
 
 reasons.push(`High confidence contact match (${person.confidence}%)`);
 
   // Priority signal
   if (person.priority === "High") {
   score += 20;
+  priorityScore += 20;
   reasons.push("High-priority decision maker");
 } else if (person.priority === "Medium") {
   score += 10;
+  priorityScore += 10;
   reasons.push("Medium-priority decision maker");
 }
 
@@ -46,6 +57,7 @@ reasons.push(`High confidence contact match (${person.confidence}%)`);
   title.includes("talent acquisition")
 ) {
   score += 30;
+  roleScore += 30;
   reasons.push("Direct ownership of talent acquisition and recruiting");
 } else if (
   title.includes("vp talent") ||
@@ -54,6 +66,7 @@ reasons.push(`High confidence contact match (${person.confidence}%)`);
   title.includes("director of recruiting")
 ) {
   score += 25;
+  roleScore += 25;
   reasons.push("Senior talent leader with staffing buying authority");
 } else if (
   title.includes("vp engineering") ||
@@ -61,18 +74,21 @@ reasons.push(`High confidence contact match (${person.confidence}%)`);
   title.includes("head of engineering")
 ) {
   score += 20;
+  roleScore += 20;
   reasons.push("Senior engineering leader involved in technical hiring");
 } else if (
   title.includes("ceo") ||
   title.includes("founder")
 ) {
   score += 15;
+  roleScore += 15;
   reasons.push("Executive likely involved in strategic hiring decisions");
 } else if (
   title.includes("engineering manager") ||
   title.includes("director of engineering")
 ) {
   score += 10;
+  roleScore += 10;
   reasons.push("Engineering leader involved in hiring decisions");
 }
 // Company-context signal:
@@ -95,6 +111,7 @@ const isExecutive =
 
 if (isSmallCompany && hasNoTalentLeader && isExecutive) {
   score += 10;
+  companyContextScore += 10;
   reasons.push(
     "Small company with no dedicated Talent leader — executive likely owns hiring"
   );
@@ -102,6 +119,7 @@ if (isSmallCompany && hasNoTalentLeader && isExecutive) {
 
 if (hasNoTalentLeader && isSeniorEngineeringLeader) {
   score += 5;
+  companyContextScore += 5;
   reasons.push(
     "No dedicated Talent leader detected — engineering leadership may directly own technical hiring"
   );
@@ -119,9 +137,15 @@ if (openJobs >= 10) {
     `Active hiring demand detected (${openJobs} open roles)`
   );
 }
-  return {
+return {
   score,
   reasons,
+  scoreBreakdown: {
+    confidence: person.confidence,
+    priority: priorityScore,
+    role: roleScore,
+    companyContext: companyContextScore,
+  },
 };
 }
 
@@ -142,7 +166,9 @@ function rankContacts(
       return {
         ...person,
         score: result.score,
+        scoreBreakdown: result.scoreBreakdown,
         reasons: result.reasons,
+        
       };
     })
     .sort((a, b) => (b.score ?? 0) - (a.score ?? 0));

@@ -11,6 +11,7 @@ export default function DecisionMakerCard({
   isTopRecommendation = false,
 }: Props) {
     const [showReasons, setShowReasons] = useState(false);
+    const [showScoreBreakdown, setShowScoreBreakdown] = useState(false);
 return (
   <div className="rounded-xl border border-zinc-800 bg-zinc-900 p-4 mb-3">
 
@@ -70,7 +71,46 @@ return (
 
         {person.score !== undefined && (
   <p className="text-xs text-cyan-400 font-medium mt-1">
-    Contact Score: {person.score}
+    <button
+  onClick={() => setShowScoreBreakdown(!showScoreBreakdown)}
+  className="text-sm text-zinc-400 hover:text-white transition"
+>
+  Contact Score: {person.score}{" "}
+  <span className="text-xs">
+    {showScoreBreakdown ? "▲" : "▼"}
+  </span>
+</button>
+
+{showScoreBreakdown && person.scoreBreakdown && (
+  <div className="mt-3 rounded-lg border border-zinc-800 bg-zinc-950 p-3 text-sm">
+
+    <div className="flex justify-between">
+      <span className="text-zinc-400">Confidence</span>
+      <span>+{person.scoreBreakdown.confidence}</span>
+    </div>
+
+    <div className="flex justify-between">
+      <span className="text-zinc-400">Priority</span>
+      <span>+{person.scoreBreakdown.priority}</span>
+    </div>
+
+    <div className="flex justify-between">
+      <span className="text-zinc-400">Role Authority</span>
+      <span>+{person.scoreBreakdown.role}</span>
+    </div>
+
+    <div className="flex justify-between">
+      <span className="text-zinc-400">Company Context</span>
+      <span>+{person.scoreBreakdown.companyContext}</span>
+    </div>
+
+    <div className="mt-2 flex items-center justify-between gap-4 border-t border-zinc-800 pt-2 font-semibold">
+  <span className="whitespace-nowrap">Total Contact Score</span>
+  <span className="shrink-0">{person.score}</span>
+</div>
+
+  </div>
+)}
   </p>
 )}
       </div>
