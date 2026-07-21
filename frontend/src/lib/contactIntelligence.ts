@@ -1,40 +1,176 @@
 import { DecisionMaker } from "@/types/decisionMaker";
 import { sampleDecisionMakers } from "@/lib/sampleDecisionMakers";
 
+type ContactScoreResult = {
+  score: number;
+  reasons: string[];
+};
+
 function discoverContacts(companyId: string): DecisionMaker[] {
   return sampleDecisionMakers.filter(
     (person) => person.companyId === companyId
   );
 }
 
-function calculateContactScore(person: DecisionMaker): number {
+function calculateContactScore(
+  person: DecisionMaker,
+  company: {
+    employees?: number;
+    signals?: {
+      openJobs?: number;
+      hasTalentLeader?: boolean;
+    };
+  }
+): ContactScoreResult {
   let score = person.confidence;
 
-  if (person.priority === "High") {
-    score += 20;
-  } else if (person.priority === "Medium") {
-    score += 10;
-  }
+  const reasons: string[] = [];
 
-  return score;
+reasons.push(`High confidence contact match (${person.confidence}%)`);
+
+  // Priority signal
+  if (person.priority === "High") {
+  score += 20;
+  reasons.push("High-priority decision maker");
+} else if (person.priority === "Medium") {
+  score += 10;
+  reasons.push("Medium-priority decision maker");
 }
 
-function rankContacts(contacts: DecisionMaker[]): DecisionMaker[] {
+  // Role / buying-authority signal
+  const title = person.title.toLowerCase();
+
+  if (
+  title.includes("head of talent") ||
+  title.includes("head of recruiting") ||
+  title.includes("talent acquisition")
+) {
+  score += 30;
+  reasons.push("Direct ownership of talent acquisition and recruiting");
+} else if (
+  title.includes("vp talent") ||
+  title.includes("vp of talent") ||
+  title.includes("director of talent") ||
+  title.includes("director of recruiting")
+) {
+  score += 25;
+  reasons.push("Senior talent leader with staffing buying authority");
+} else if (
+  title.includes("vp engineering") ||
+  title.includes("vp of engineering") ||
+  title.includes("head of engineering")
+) {
+  score += 20;
+  reasons.push("Senior engineering leader involved in technical hiring");
+} else if (
+  title.includes("ceo") ||
+  title.includes("founder")
+) {
+  score += 15;
+  reasons.push("Executive likely involved in strategic hiring decisions");
+} else if (
+  title.includes("engineering manager") ||
+  title.includes("director of engineering")
+) {
+  score += 10;
+  reasons.push("Engineering leader involved in hiring decisions");
+}
+// Company-context signal:
+// In small companies without a Talent leader,
+// CEO / Founder is more likely to own hiring decisions.
+const isSmallCompany =
+  company.employees !== undefined && company.employees <= 25;
+
+const hasNoTalentLeader =
+  company.signals?.hasTalentLeader === false;
+
+const isExecutive =
+  title.includes("ceo") ||
+  title.includes("founder");
+
+  const isSeniorEngineeringLeader =
+  title.includes("vp engineering") ||
+  title.includes("vp of engineering") ||
+  title.includes("head of engineering");
+
+if (isSmallCompany && hasNoTalentLeader && isExecutive) {
+  score += 10;
+  reasons.push(
+    "Small company with no dedicated Talent leader — executive likely owns hiring"
+  );
+}
+
+if (hasNoTalentLeader && isSeniorEngineeringLeader) {
+  score += 5;
+  reasons.push(
+    "No dedicated Talent leader detected — engineering leadership may directly own technical hiring"
+  );
+}
+
+// Hiring-demand context
+const openJobs = company.signals?.openJobs ?? 0;
+
+if (openJobs >= 10) {
+  reasons.push(
+    `Strong hiring demand detected (${openJobs} open roles)`
+  );
+} else if (openJobs >= 5) {
+  reasons.push(
+    `Active hiring demand detected (${openJobs} open roles)`
+  );
+}
+  return {
+  score,
+  reasons,
+};
+}
+
+function rankContacts(
+  contacts: DecisionMaker[],
+  company: {
+    employees?: number;
+    signals?: {
+      openJobs?: number;
+      hasTalentLeader?: boolean;
+    };
+  }
+): DecisionMaker[] {
   const rankedContacts = contacts
-    .map((person) => ({
-      ...person,
-      score: calculateContactScore(person),
-    }))
+    .map((person) => {
+      const result = calculateContactScore(person, company);
+
+      return {
+        ...person,
+        score: result.score,
+        reasons: result.reasons,
+      };
+    })
     .sort((a, b) => (b.score ?? 0) - (a.score ?? 0));
 
-  return rankedContacts.map((person, index) => ({
-    ...person,
-    isTopRecommendation: index === 0,
-  }));
+  return rankedContacts.map((person, index) => {
+    return {
+      ...person,
+      isTopRecommendation: index === 0,
+      reasons:
+        index === 0
+          ? [
+              ...(person.reasons ?? []),
+              "Highest-ranked decision maker for this staffing opportunity",
+            ]
+          : person.reasons,
+    };
+  });
 }
 
-export function getDecisionMakers(company: { id: string }): DecisionMaker[] {
+export function getDecisionMakers(company: {
+  id: string;
+  employees?: number;
+  signals?: {
+    openJobs?: number;
+    hasTalentLeader?: boolean;
+  };
+}): DecisionMaker[] {
   const contacts = discoverContacts(company.id);
 
-  return rankContacts(contacts);
+  return rankContacts(contacts, company);
 }
