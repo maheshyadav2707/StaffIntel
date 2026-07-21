@@ -20,12 +20,17 @@ function calculateContactScore(person: DecisionMaker): number {
 }
 
 function rankContacts(contacts: DecisionMaker[]): DecisionMaker[] {
-  return contacts
+  const rankedContacts = contacts
     .map((person) => ({
       ...person,
       score: calculateContactScore(person),
     }))
     .sort((a, b) => (b.score ?? 0) - (a.score ?? 0));
+
+  return rankedContacts.map((person, index) => ({
+    ...person,
+    isTopRecommendation: index === 0,
+  }));
 }
 
 export function getDecisionMakers(company: { id: string }): DecisionMaker[] {

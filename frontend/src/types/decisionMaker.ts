@@ -13,6 +13,8 @@ export interface DecisionMaker {
 
   score?: number;
 
+  isTopRecommendation?: boolean;
+
   recommendation?: string;
 
   reasons?: string[];

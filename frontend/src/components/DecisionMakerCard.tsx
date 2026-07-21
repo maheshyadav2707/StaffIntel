@@ -38,11 +38,15 @@ return (
             {person.department}
           </p>
 
-          {person.recommendation && (
-            <div className="mt-2 inline-flex rounded-full bg-violet-500/20 px-2 py-1 text-xs font-medium text-violet-300">
-              ⭐ {person.recommendation}
-            </div>
-          )}
+        {person.isTopRecommendation ? (
+  <div className="mt-2 inline-flex rounded-full bg-yellow-500/20 px-2 py-1 text-xs font-medium text-yellow-300">
+    🏆 Best First Contact
+  </div>
+) : person.recommendation ? (
+  <div className="mt-2 inline-flex rounded-full bg-violet-500/20 px-2 py-1 text-xs font-medium text-violet-300">
+    ⭐ {person.recommendation}
+  </div>
+) : null}
         </div>
       </div>
 

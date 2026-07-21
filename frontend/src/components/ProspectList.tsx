@@ -14,20 +14,31 @@ export default function ProspectList({
   onSelectCompany,
 }: ProspectListProps) {
   const [companies, setCompanies] = useState<any[]>([]);
+  const [dataSource, setDataSource] = useState<"live" | "demo">("live");
 
 useEffect(() => {
   async function loadCompanies() {
     try {
-      const data = await getLiveCompanies();
-      console.log("Live jobs:", data);
-      setCompanies(data);
+    const data = await getLiveCompanies();
+console.log("Live jobs:", data);
+
+setCompanies(data);
+setDataSource("live");
   if (data.length > 0) {
   console.log("Selecting first company:", data[0]);
   onSelectCompany(data[0]);
 }
-    } catch (error) {
-      console.error("Failed to load live jobs:", error);
-    }
+} catch {
+  console.warn("Live jobs unavailable. Using sample companies.");
+
+  setCompanies(sampleCompanies);
+  setDataSource("demo");
+
+  if (sampleCompanies.length > 0) {
+    console.log("Selecting fallback company:", sampleCompanies[0]);
+    onSelectCompany(sampleCompanies[0]);
+  }
+}
   }
 
   loadCompanies();
@@ -47,9 +58,21 @@ const rankedCompanies = sourceCompanies
 
     <div className="rounded-2xl border border-slate-800 bg-slate-900 p-6">
 
-      <h2 className="text-xl font-bold mb-6">
-        🎯 Today's Top Prospects
-      </h2>
+      <div className="mb-6 flex items-center justify-between">
+  <h2 className="text-xl font-bold">
+    🎯 Today's Top Prospects
+  </h2>
+
+  <span
+    className={`rounded-full px-3 py-1 text-xs font-medium ${
+      dataSource === "live"
+        ? "bg-green-500/20 text-green-400"
+        : "bg-yellow-500/20 text-yellow-400"
+    }`}
+  >
+    {dataSource === "live" ? "🟢 Live Data" : "🟡 Demo Data"}
+  </span>
+</div>
 
       <div className="space-y-3">
 

@@ -27,7 +27,7 @@ export const sampleDecisionMakers: DecisionMaker[] = [
     department: "Engineering",
     priority: "High",
     confidence: 93,
-    recommendation: "Best First Contact",
+    recommendation: "Technical Hiring Leader",
     linkedin: "https://linkedin.com/in/michaelchen",
     email: "michael@acmeai.com",
   },
