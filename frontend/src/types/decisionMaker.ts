@@ -9,6 +9,10 @@ export interface DecisionMaker {
 
   priority: "High" | "Medium" | "Low";
   qualification?: "Qualified" | "Possible" | "Low Priority" | "Disqualified";
+  buyingAuthority?: "High" | "Medium" | "Low";
+  hiringInfluence?: "High" | "Medium" | "Low";
+  technicalInfluence?: "High" | "Medium" | "Low";
+  outreachPriority?: 1 | 2 | 3;
   confidence: number;
 
   score?: number;

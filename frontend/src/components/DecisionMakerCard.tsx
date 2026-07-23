@@ -50,6 +50,45 @@ return (
   </span>
 )}
 
+{person.buyingAuthority &&
+  person.hiringInfluence &&
+  person.technicalInfluence && (
+    <div className="mt-3 space-y-1 text-xs">
+      <p className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-zinc-500">
+  Authority Intelligence
+</p>
+      <div className="flex gap-2">
+        <span className="text-zinc-500">Buying Authority:</span>
+        <span className="font-semibold text-zinc-200">
+          {person.buyingAuthority}
+        </span>
+      </div>
+
+      <div className="flex gap-2">
+        <span className="text-zinc-500">Hiring Influence:</span>
+        <span className="font-semibold text-zinc-200">
+          {person.hiringInfluence}
+        </span>
+      </div>
+
+      <div className="flex gap-2">
+        <span className="text-zinc-500">Technical Influence:</span>
+        <span className="font-semibold text-zinc-200">
+          {person.technicalInfluence}
+        </span>
+      </div>
+    </div>
+  )}
+
+  {person.outreachPriority && (
+  <div className="flex gap-2">
+    <span className="text-zinc-500">Outreach Priority:</span>
+    <span className="font-semibold text-zinc-200">
+      #{person.outreachPriority}
+    </span>
+  </div>
+)}
+
           <p className="text-xs text-zinc-500 mt-1">
             {person.department}
           </p>

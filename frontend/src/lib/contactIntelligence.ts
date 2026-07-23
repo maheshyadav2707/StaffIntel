@@ -70,6 +70,137 @@ function qualifyContact(
 
   return "Possible";
 }
+
+function determineBuyingAuthority(
+  person: DecisionMaker
+): "High" | "Medium" | "Low" {
+  const title = person.title.toLowerCase();
+
+  // Direct budget / staffing authority
+  if (
+    title.includes("ceo") ||
+    title.includes("founder") ||
+    title.includes("head of talent") ||
+    title.includes("head of recruiting") ||
+    title.includes("vp talent") ||
+    title.includes("vp of talent") ||
+    title.includes("director of talent") ||
+    title.includes("director of recruiting")
+  ) {
+    return "High";
+  }
+
+  // Strong hiring influence, but may not directly own staffing budget
+  if (
+    title.includes("cto") ||
+    title.includes("vp engineering") ||
+    title.includes("vp of engineering") ||
+    title.includes("head of engineering") ||
+    title.includes("director of engineering") ||
+    title.includes("hr manager")
+  ) {
+    return "Medium";
+  }
+
+  return "Low";
+}
+
+function determineHiringInfluence(
+  person: DecisionMaker
+): "High" | "Medium" | "Low" {
+  const title = person.title.toLowerCase();
+
+  // Direct ownership or strong involvement in hiring
+  if (
+    title.includes("head of talent") ||
+    title.includes("head of recruiting") ||
+    title.includes("talent acquisition") ||
+    title.includes("vp engineering") ||
+    title.includes("vp of engineering") ||
+    title.includes("head of engineering") ||
+    title.includes("director of talent") ||
+    title.includes("director of recruiting") ||
+    title.includes("hiring manager")
+  ) {
+    return "High";
+  }
+
+  // Executive or managerial influence
+  if (
+    title.includes("ceo") ||
+    title.includes("founder") ||
+    title.includes("cto") ||
+    title.includes("director of engineering") ||
+    title.includes("engineering manager") ||
+    title.includes("hr manager")
+  ) {
+    return "Medium";
+  }
+
+  return "Low";
+}
+
+function determineOutreachPriority(
+  qualification: DecisionMaker["qualification"],
+  buyingAuthority: DecisionMaker["buyingAuthority"],
+  hiringInfluence: DecisionMaker["hiringInfluence"],
+  technicalInfluence: DecisionMaker["technicalInfluence"]
+): 1 | 2 | 3 {
+  // Never prioritize contacts we've already determined are poor targets.
+  if (
+    qualification === "Disqualified" ||
+    qualification === "Low Priority"
+  ) {
+    return 3;
+  }
+
+  // Strongest commercial or hiring authority.
+  if (
+    buyingAuthority === "High" ||
+    hiringInfluence === "High"
+  ) {
+    return 1;
+  }
+
+  // Useful secondary stakeholder.
+  if (
+    buyingAuthority === "Medium" ||
+    hiringInfluence === "Medium" ||
+    technicalInfluence === "High"
+  ) {
+    return 2;
+  }
+
+  return 3;
+}
+
+function determineTechnicalInfluence(
+  person: DecisionMaker
+): "High" | "Medium" | "Low" {
+  const title = person.title.toLowerCase();
+
+  // Direct technical leadership
+  if (
+    title.includes("cto") ||
+    title.includes("vp engineering") ||
+    title.includes("vp of engineering") ||
+    title.includes("head of engineering") ||
+    title.includes("director of engineering")
+  ) {
+    return "High";
+  }
+
+  // Technical managers involved in candidate evaluation
+  if (
+    title.includes("engineering manager") ||
+    title.includes("technical lead") ||
+    title.includes("tech lead")
+  ) {
+    return "Medium";
+  }
+
+  return "Low";
+}
 function calculateContactScore(
   person: DecisionMaker,
   company: {
@@ -216,6 +347,15 @@ function rankContacts(
   .map((person) => {
     const result = calculateContactScore(person, company);
 const qualification = qualifyContact(person);
+const buyingAuthority = determineBuyingAuthority(person);
+const hiringInfluence = determineHiringInfluence(person);
+const technicalInfluence = determineTechnicalInfluence(person);
+const outreachPriority = determineOutreachPriority(
+  qualification,
+  buyingAuthority,
+  hiringInfluence,
+  technicalInfluence
+);
 
 let adjustedScore = result.score;
 let qualificationAdjustment = 0;
@@ -233,6 +373,10 @@ adjustedScore += qualificationAdjustment;
     return {
       ...person,
       qualification,
+      buyingAuthority,
+      hiringInfluence,
+      technicalInfluence,
+      outreachPriority,
       score: adjustedScore,
       scoreBreakdown: {
   ...result.scoreBreakdown,
