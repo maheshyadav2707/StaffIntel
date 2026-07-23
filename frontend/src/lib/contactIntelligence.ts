@@ -1,5 +1,5 @@
 import { DecisionMaker } from "@/types/decisionMaker";
-import { sampleDecisionMakers } from "@/lib/sampleDecisionMakers";
+import { discoverContacts } from "@/lib/contacts/discoverContacts";
 
 type ContactScoreResult = {
   score: number;
@@ -13,11 +13,6 @@ type ContactScoreResult = {
   };
 };
 
-function discoverContacts(companyId: string): DecisionMaker[] {
-  return sampleDecisionMakers.filter(
-    (person) => person.companyId === companyId
-  );
-}
 function qualifyContact(
   person: DecisionMaker
 ): "Qualified" | "Possible" | "Low Priority" | "Disqualified" {
@@ -402,15 +397,21 @@ adjustedScore += qualificationAdjustment;
   });
 }
 
-export function getDecisionMakers(company: {
+export async function getDecisionMakers(company: {
   id: string;
-  employees?: number;
+name: string;
+domain?: string;
+employees?: number;
   signals?: {
     openJobs?: number;
     hasTalentLeader?: boolean;
   };
-}): DecisionMaker[] {
-  const contacts = discoverContacts(company.id);
+}): Promise<DecisionMaker[]> {
+  const contacts = await discoverContacts({
+  companyId: company.id,
+  companyName: company.name,
+  companyDomain: company.domain,
+});
 
   return rankContacts(contacts, company);
 }

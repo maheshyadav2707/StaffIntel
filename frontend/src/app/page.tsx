@@ -1,7 +1,7 @@
 "use client";
 
 import { calculateResponseScore } from "../lib/responseScore";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import ProspectList from "@/components/ProspectList";
 import StatsGrid from "@/components/StatsGrid";
 import RecommendationCard from "@/components/RecommendationCard";
@@ -9,15 +9,54 @@ import Header from "@/components/Header";
 import Sidebar from "@/components/Sidebar";
 import { sampleCompanies } from "@/data/sampleCompanies";
 import DecisionMakerCard from "@/components/DecisionMakerCard";
-import { getDecisionMakers } from "@/lib/contactIntelligence";
+import { DecisionMaker } from "@/types/decisionMaker";
 
 export default function Home() {
 
-  const [selectedCompany, setSelectedCompany] = useState<any>(null);
+  const [selectedCompany, setSelectedCompany] = useState<any>(null); const [decisionMakers, setDecisionMakers] = useState<DecisionMaker[]>([]);
   const [aiInsight, setAiInsight] = useState<any>(null);
   const [emailDraft, setEmailDraft] = useState<any>(null);
   const [showEmailModal, setShowEmailModal] = useState(false);
   const [searchCompany, setSearchCompany] = useState("");
+    useEffect(() => {
+    async function loadDecisionMakers() {
+      if (!selectedCompany) {
+        setDecisionMakers([]);
+        return;
+      }
+
+      try {
+  const response = await fetch("/api/contacts", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      companyId: selectedCompany.id,
+      companyName: selectedCompany.name,
+      companyDomain: selectedCompany.domain,
+      employees: selectedCompany.employees,
+  signals: selectedCompany.signals,
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error(
+      `Contact API failed with status ${response.status}`
+    );
+  }
+
+  const data = await response.json();
+
+  setDecisionMakers(data.contacts ?? []);
+} catch (error) {
+  console.error("Failed to load decision makers:", error);
+  setDecisionMakers([]);
+}
+    }
+
+    loadDecisionMakers();
+  }, [selectedCompany]);
      async function generateEmail(company: any) {
   const response = await fetch("/api/email", {
     method: "POST",
@@ -159,9 +198,8 @@ return (
     <h2 className="text-lg font-semibold text-white mb-4">
       Decision Makers
     </h2>
-
  {selectedCompany &&
- getDecisionMakers(selectedCompany).map((person, index) => (
+ decisionMakers.map((person, index) => (
   <DecisionMakerCard
     key={person.id}
     person={person}
